@@ -46,8 +46,8 @@ Flash_HAL_L476RG.bin \
 all: Flash_HAL_L476RG.elf secondary-outputs
 
 # Tool invocations
-Flash_HAL_L476RG.elf: $(OBJS) $(USER_OBJS) C:\Users\Souleymane\ BAH\Desktop\5AE-ESPE\Projet\ interdisciplinaire\Software\Flash_HAL_L476RG\STM32L476RGTX_FLASH.ld
-	arm-none-eabi-gcc -o "Flash_HAL_L476RG.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Souleymane BAH\Desktop\5AE-ESPE\Projet interdisciplinaire\Software\Flash_HAL_L476RG\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Flash_HAL_L476RG.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Flash_HAL_L476RG.elf: $(OBJS) $(USER_OBJS) C:\Users\Souleymane\ BAH\Desktop\COURS\5AE-ESPE\Projet\ interdisciplinaire\Software\Flash_HAL_L476RG\STM32L476RGTX_FLASH.ld
+	arm-none-eabi-gcc -o "Flash_HAL_L476RG.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Souleymane BAH\Desktop\COURS\5AE-ESPE\Projet interdisciplinaire\Software\Flash_HAL_L476RG\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Flash_HAL_L476RG.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

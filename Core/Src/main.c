@@ -19,7 +19,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "UART.h"
 #include "string.h"
+#include "stdlib.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -33,7 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define FLASH_STORAGE 0x0803F800
+#define FLASH_STORAGE 0x080FF800
 #define page_size 0x800
 /* USER CODE END PD */
 
@@ -43,6 +45,10 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+volatile uint64_t data_to_FLASH;
+volatile uint64_t data_length;
+volatile uint16_t pages;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -53,19 +59,21 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 void save_to_flash(uint8_t *data)
 {
 	volatile uint64_t data_to_FLASH[(strlen((char*)data)/8)	+ (int)((strlen((char*)data) % 8) != 0)];
 	memset((uint8_t*)data_to_FLASH, 0, strlen((char*)data_to_FLASH));
 	strcpy((char*)data_to_FLASH, (char*)data);
 	volatile uint64_t data_length = (strlen((char*)data_to_FLASH)/ 8) + (int)((strlen((char*)data_to_FLASH) % 8) != 0);
-	volatile uint16_t pages = (strlen((char*)data)/page_size) + (int)((strlen((char*)data) % page_size) != 0);
+	pages = (strlen((char*)data)/page_size) + (int)((strlen((char*)data) % page_size) != 0);
 
 	/* Unlock the Flash to enable the flash control register access *************/
 	  HAL_FLASH_Unlock();
@@ -76,7 +84,7 @@ void save_to_flash(uint8_t *data)
 	  /* Fill EraseInit structure*/
 	  FLASH_EraseInitTypeDef EraseInitStruct;
 	  EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
-	  EraseInitStruct.Page = 0x13F;
+	  EraseInitStruct.Page = 0x1FF;
 	  EraseInitStruct.Banks = FLASH_BANK_2;
 	  EraseInitStruct.NbPages = pages;
 	  uint32_t PageError;
@@ -89,7 +97,7 @@ void save_to_flash(uint8_t *data)
 	  {
 		  if (status == HAL_OK)
 		  {
-			  status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, FLASH_STORAGE+write_cnt, data_to_FLASH[index]); //_WORD
+			  status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, FLASH_STORAGE+write_cnt, data_to_FLASH[index]); //_WORD  _FAST ( No interrupt)
 			  if(status == HAL_OK)
 			  {
 				  write_cnt += 8;
@@ -149,35 +157,41 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  UART2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
   char write_data[16];
   memset(write_data, 0, sizeof(write_data));
-  strcpy(write_data, "Bonjlo World");
-  //char write_data[12]="Hello World";
+  strcpy(write_data, "Hello Insa Cul");
   char *write_data_p = write_data;
 
   save_to_flash((uint8_t*) write_data_p);
 
-  char read_data[6];
+  char read_data[16];
   memset(read_data, 0, sizeof(read_data));
-
   read_flash((uint8_t*)read_data);
+  char vol = read_data[0];
+  int voltage=read_data[0];
+  int SOC=read_data[1];
+  int Current=read_data[2];
+  char cu = read_data[-1];
+  int i=0;
+  while((read_data[i]) != '\0'){
+	  char a=read_data[i];
+	  i++;
+  }
 
-  float write_number = 235.756f;
-  float *pointer_write = &write_number;
-  save_to_flash((uint8_t*)pointer_write);
-  float read_number = 0.0f;
-  float *pointer_read = &read_number;
-  read_flash((uint8_t*)pointer_read);
+
+
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
+	USART_Write(USART2, (uint8_t *)read_data, strlen(read_data));
+
 
     /* USER CODE BEGIN 3 */
   }
