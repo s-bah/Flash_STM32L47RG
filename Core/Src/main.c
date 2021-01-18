@@ -19,9 +19,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "UART.h"
 #include "string.h"
-#include "stdlib.h"
+//#include "UART.h"
+//#include "stdlib.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -59,6 +59,8 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+
+
 
 /* USER CODE BEGIN PFP */
 
@@ -157,32 +159,70 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  UART2_Init();
+  //UART2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  /*
   char write_data[16];
   memset(write_data, 0, sizeof(write_data));
-  strcpy(write_data, "Hello Insa Cul");
+  strcpy(write_data, "123 456 Hello I");
   char *write_data_p = write_data;
-
-  save_to_flash((uint8_t*) write_data_p);
+  save_to_flash((uint8_t*) write_data);
 
   char read_data[16];
   memset(read_data, 0, sizeof(read_data));
   read_flash((uint8_t*)read_data);
-  char vol = read_data[0];
-  int voltage=read_data[0];
-  int SOC=read_data[1];
-  int Current=read_data[2];
-  char cu = read_data[-1];
+  */
+
+  //Ecriture
+
+  float SOC1=12.560;
+  float VOL1=23.45;
+  float CUR1=8.9;
+
+  float SOC2=18.960;
+  float VOL2=24.001;
+  float CUR2=5.3;
+
+  float * SOC1_p=&SOC1;
+  float * VOL1_p=&VOL1;
+  float * CUR1_p=&CUR1;
+  save_to_flash((uint8_t*) SOC1_p);
+  save_to_flash((uint8_t*) VOL1_p);
+  save_to_flash((uint8_t*) CUR1_p);
+
+  float * SOC2_p=&SOC2;
+  float * VOL2_p=&VOL2;
+  float * CUR2_p=&CUR2;
+  save_to_flash((uint8_t*) SOC2_p);
+  save_to_flash((uint8_t*) VOL2_p);
+  save_to_flash((uint8_t*) CUR2_p);
+
+ //Lecture
+  float r_SOC1=0.0f;
+  float r_VOL1=0.0f;
+  float r_CUR1=0.0f;
+
+  float r_SOC2=0.0f;
+  float r_VOL2=0.0f;
+  float r_CUR2=0.0f;
+
+  float * r_SOC1_p=&r_SOC1;
+  float * r_VOL1_p=&r_VOL1;
+  float * r_CUR1_p=&r_CUR1;
+  read_flash((uint8_t*)r_SOC1_p);
+  read_flash((uint8_t*)r_VOL1_p);
+  read_flash((uint8_t*)r_CUR1_p);
+
+  float * r_SOC2_p=&r_SOC2;
+  float * r_VOL2_p=&r_VOL2;
+  float * r_CUR2_p=&r_CUR2;
+  read_flash((uint8_t*)r_SOC2_p);
+  read_flash((uint8_t*)r_VOL2_p);
+  read_flash((uint8_t*)r_CUR2_p);
+
   int i=0;
-  while((read_data[i]) != '\0'){
-	  char a=read_data[i];
-	  i++;
-  }
-
-
 
   /* USER CODE END 2 */
   /* Infinite loop */
@@ -190,9 +230,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	USART_Write(USART2, (uint8_t *)read_data, strlen(read_data));
-
-
+	//USART_Write(USART2, (uint8_t *)read_data, strlen(read_data));
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
